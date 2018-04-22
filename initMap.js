@@ -1,10 +1,20 @@
 var vue = new Vue({
     el: '#result',
     data: {
-        cost: 0,
+        perKilomiters: 0.185,
+        perMinutes: 0.025,
+        reservation: 0.9,
         dist: '0 km',
         time: '0 min.',
+        distValue: 0,
+        timeValue: 0,
+        cost: 1.65,
     },
+    methods: {
+        calculateCost() {
+            this.cost = this.reservation + this.distValue * this.perKilomiters * 0.001 + this.timeValue * this.perMinutes * 0.001;
+        },
+    }
 });
 
 var calcCost = document.querySelector('.calcCost');
@@ -45,25 +55,31 @@ calcCost.addEventListener('click', e => {
             destinations: [end],
             travelMode: 'DRIVING',
         }, callback);
-    });
-    
-    function callback(response, status) {
-        if (status == 'OK') {
-            var origins = response.originAddresses;
-            var destinations = response.destinationAddresses;
-            
-            for (var i = 0; i < origins.length; i++) {
-                var results = response.rows[i].elements;
-                for (var j = 0; j < results.length; j++) {
-                    var element = results[j];
-                    var distance = element.distance.text;
-                    var duration = element.duration.text;
-                    var from = origins[i];
-                    var to = destinations[j];
-                }
-            }
-            vue.dist = distance;
-            vue.time = duration;
-            console.log(distance, duration);
+});
+
+function callback(response, status) {
+    if (status == 'OK') {
+        var origins = response.originAddresses;
+        var destinations = response.destinationAddresses;
+
+        for (var i = 0; i < origins.length; i++) {
+            var results = response.rows[i].elements;
+            for (var j = 0; j < results.length; j++) {
+                var element = results[j];
+                var distanceText = element.distance.text;
+                vue.distValue = element.distance.value;
+                var durationText = element.duration.text;
+                vue.timeValue = element.duration.value;
+                var from = origins[i];
+                var to = destinations[j];
+            };
+        };
+        if(vue.cost < 1.65) {
+            vue.cost == 1.65;
+        };
+        vue.dist = distanceText;
+        vue.time = durationText;
+        vue.calculateCost();
+        console.log(vue.distValue, vue.timeValue);
     }
 }
