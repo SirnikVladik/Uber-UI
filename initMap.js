@@ -14,6 +14,9 @@ var vue = new Vue({
         calculateCost() {
             this.cost = this.reservation + this.distValue * this.perKilomiters * 0.001 + this.timeValue * this.perMinutes * 0.001;
             this.cost = Math.ceil(this.cost * 100) / 100;
+            if (this.cost < 1.65) {
+                this.cost = 1.65;
+            };
         },
     }
 });
@@ -74,9 +77,6 @@ function callback(response, status) {
                 var from = origins[i];
                 var to = destinations[j];
             };
-        };
-        if (vue.cost < 1.65) {
-            vue.cost == 1.65;
         };
         vue.dist = distanceText;
         vue.time = durationText;
